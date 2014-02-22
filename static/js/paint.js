@@ -20,33 +20,6 @@ members.addEventListener("click", function () {
     toggleSidebar();
 }, false);
 
-/*
-function draw() {
-    "use strict";
-    var canvas = document.querySelector("#canvas"),
-        ctx = null;
-    if (canvas.getContext) {
-        ctx = canvas.getContext('2d');
-        ctx.fillStyle = "rgb(200, 0, 0)";
-        ctx.fillRect(10, 25, 100, 7);
-        ctx.fillRect(52, 15, 14, 35);
-        ctx.fillRect(17, 45, 89, 7);
-        ctx.fillRect(17, 45, 14, 35);
-        ctx.fillRect(92, 45, 14, 35);
-        ctx.fillRect(17, 61, 89, 7);
-        ctx.fillRect(17, 77, 89, 7);
-        ctx.fillRect(52, 84, 14, 35);
-        ctx.fillRect(10, 95, 100, 7);
-        ctx.fillRect(135, 76, 85, 7);
-        ctx.fillRect(128, 95, 100, 7);
-        ctx.fillRect(170, 76, 14, 45);
-    } else {
-        console.log("canvas error");
-    }
-}
-
-document.addEventListener("DOMContentLoaded", draw, false);
-*/
 var container = document.querySelector("#container");
 var win = document.querySelector("#window");
 var title = document.querySelector("#title");

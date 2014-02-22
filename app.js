@@ -14,8 +14,7 @@ app.get('/', function(req, res) {
 
 
 
-io
-.of('/draw')
+io.of('/draw')
 .on('connection', function(socket) {
     socket.emit('start', { sid: socket.id });
     socket.on('addClick', function(data) {
@@ -24,5 +23,15 @@ io
     });
     socket.on('disconnect', function(data) {
         console.log(socket.id + ' disconnected.');
+    });
+});
+
+io.of('/chat')
+.on('connection', function(socket) {
+    socket.emit('news', { name: 'Server', msg: 'Welcome!' });
+    socket.join('lobby');
+    
+    socket.on('newmsg', function(data) {
+        socket.broadcast.to('lobby').emit('news', { name: data.name, msg: data.msg });
     });
 });

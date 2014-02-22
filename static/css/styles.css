@@ -87,14 +87,44 @@ body {
     height: 60px;
 }
 
-#chat-room {
+#chat-room-container {
     background-color: white;
     height: calc(100% - 60px);
 }
-
-#chat-room #msg {
+#chat-room {
+    width: 100%;
+    word-break: break-all;
+}
+#chat-room-container #msg {
     width: 100%;
     position: absolute;
     bottom: 0;
     margin: 0;
+}
+
+#tools a{
+    display: inline-block;
+    cursor: pointer;
+    color: white;
+    height: 19px;
+    margin: 3px;
+}
+.tool-cat{
+}
+
+#color-choose {
+    left: 55px;
+    position: absolute;
+    width: 58px;
+}
+#color-choose-btn:active {
+    font-size: 10px;
+}
+    
+#color-choose span {
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+    border:1.5px solid;
+    cursor:pointer;
 }
