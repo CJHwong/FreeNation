@@ -1,171 +1,68 @@
 <html>
-    <head>
-        <link type="text/css" rel="stylesheet" href="static/css/styles.css">
-        <meta charset="utf-8">
-        <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
-        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-        <script type="text/javascript" src="/static/js/css.js"></script>
-        <script type="text/javascript">
-            var drawings = Object();
-            var chats = io.connect('/chat');
-            var draws = io.connect('/draw');
-            var mysid;
-            var paintColor = "red";
-            $(function() {
 
-            draws.on('start', function(data) {
-                mysid = data.sid;
-            });
-            draws.on('toDraw', function(data){
-                addClick(data.sid, data.x, data.y, data.drag, data.pcolor, data.stamp);
-                redraw();
-            });
-            var context = document.getElementById('canvas').getContext("2d");
-            $('#window').mousedown(function(e){
-              paint = true;
-              draws.emit('addClick', {x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop, drag: false, pcolor: paintColor});
-              //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, paintColor);
-              //redraw();
-            });
-            $('#window').mousemove(function(e){
-              if(paint){
-                draws.emit('addClick', {x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop, drag: true, pcolor: paintColor});
-                //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, paintColor);
-                //redraw();
-              }
-            });
-            $('#window').mouseup(function(e){
-              paint = false;
-            });
-            $('#window').mouseleave(function(e){
-              paint = false;
-                
-            });
-                
-            chats.on('news', function (data) {
-                $("#chat-room").append("<span>" + data.name + ": " + data.msg + "<br></span>");
-            });
-            $("#msg").keydown(function(e) {
-                //console.log(e);
-                if (e.keyCode == 13) {
-                    //console.log("qq");
-                    chats.emit('newmsg', { name: "st900278", msg: $("#msg").val() });
-                    $("#chat-room").append("<span>st900278: " + $("#msg").val() + "</span><br>");
-                    $("#msg").val("");
-                }
-            });
-            $("#color-choose-btn").click(function() {
-                $("#color-choose").show();
-            });
+<head>
+    <link type="text/css" rel="stylesheet" href="static/css/styles.css">
+    <meta charset="utf-8">
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/static/js/css.js"></script>
+</head>
 
-            var paint;
+<body>
+    <div id="fb-root"></div>
+    <nav id="navbar">
+        <h1>你想畫你就畫</h1>
+    </nav>
 
-            var addClick = function(sid, x, y, dragging, pcolor, stamp)
-            {
-              if (!drawings[sid])
-              {
-                  drawings[sid] = Object();
-                  drawings[sid]["clickX"] = new Array();
-                  drawings[sid]["clickY"]= new Array();
-                  drawings[sid]["clickDrag"] = new Array();
-                  drawings[sid]["colors"] = new Array();
-                  drawings[sid]["stamps"] = new Array();
-              }
-              var clickX = drawings[sid].clickX;
-              var clickY = drawings[sid].clickY;
-              var clickDrag = drawings[sid].clickDrag;
-              var colors = drawings[sid].colors;
-              var stamps = drawings[sid].stamps;
-              clickX.push(x);
-              clickY.push(y);
-              clickDrag.push(dragging);
-              colors.push(pcolor);
-              stamps.push(stamp);
-            }
-            var redraw = function(){
-              context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+    <div id="tools">
+        <a class="tools-cat" id="color-choose-btn">色</a>
+        <a class="tools-cat" id="size-choose-btn">大</a>
+    </div>
 
-              
-              context.lineJoin = "round";
-              context.lineWidth = 5;
-                
-              var objs = new Array();
-              for (var sid in drawings)
-              {
-                 var stamps = drawings[sid].stamps;
-                 for (var i = 0; i < stamps.length; i++)
-                     objs.push({'sid': sid, 'i': i, 'stamp': stamps[i]});
-              }
-              objs = objs.sort(function(x, y) { return x.stamp - y.stamp; });
-              //console.log(objs);
-              for (var idx in objs)
-              {
-                  var sid = objs[idx].sid;
-                  var i = objs[idx].i;
-                  context.strokeStyle = drawings[sid].colors[i];
-                  context.beginPath();
-                  if(drawings[sid].clickDrag[i] && i){
-                      context.moveTo(drawings[sid].clickX[i-1], drawings[sid].clickY[i-1]);
-                  }else{
-                      context.moveTo(drawings[sid].clickX[i]-1, drawings[sid].clickY[i]);
-                  }
-                  context.lineTo(drawings[sid].clickX[i], drawings[sid].clickY[i]);
-                  context.closePath();
-                  context.stroke();
-              }
-            }
-            $("#color-choose span").click(function() {
-                paintColor = $(this).css("background-color");
-            });
-            $("#download-btn").click(function() {
-                window.open($("#canvas")[0].toDataURL("image/png"));
-            });
-        });
-        </script>
-    </head>
-    <body>
-        <nav id="navbar"><h1>你想畫你就畫</h1></nav>
-        
-        <div id="tools">
-            <a class="tools-cat" id="color-choose-btn">色</a>
-            <a class="tools-cat" id="size-choose-btn">大</a><br>
-            <a class="tools-cat" id="eraser-btn">E</a>
-            <a class="tools-cat" id="download-btn">D</a>
+    <div id="container">
+        <div id="window">
+            <div id="title"></div>
+            <canvas id="canvas" width="350" height="350"></canvas>
         </div>
-        
-        <div id="container">
-            <div id="window">
-                <div id="title"></div>
-                <canvas id="canvas" width="350" height="350"></canvas>
-            </div>
+    </div>
+
+    <div id="sidebar">
+        <div id="members">
+            <fb:login-button autologoutlink="true" perms="email,user_birthday,status_update,publish_stream"></fb:login-button>
         </div>
-        
-        <div id="sidebar">
-            <div id="members"></div>
-            <div id="chat-room-container">
-                <div id="chat-room"></div>
-                <input id="msg" type="text" placeholder="Type here">
-            </div>
+        <div id="chat-room-container">
+            <div id="chat-room"></div>
+            <input id="msg" type="text" placeholder="Type here">
         </div>
-        <!--<div style="background-color: black; width:100%; height: 100%; position:fixed; z-index:100; top:0; opacity:0.4">
+    </div>
+    <!--<div style="background-color: black; width:100%; height: 100%; position:fixed; z-index:100; top:0; opacity:0.4">
             <div>
                 <input type="text" placeholder="XD" />
             </div>
         </div>-->
-        
-        <div class="tool_group" id="color-choose" style="display:none; ">
-            <span style="background-color: aqua"></span><span style="background-color: gray"></span><br>
-            <span style="background-color: navy"></span><span style="background-color: silver"></span><br>
-            <span style="background-color: black"></span><span style="background-color: green"></span><br>
-            <span style="background-color: olive"></span><span style="background-color: teal"></span><br>
-            <span style="background-color: blue"></span><span style="background-color: lime"></span><br>
-            <span style="background-color: purple"></span><span style="background-color: yellow"></span><br>
-            <span style="background-color: red"></span><span style="background-color: white"></span><br>
-            <span style="background-color: fuchsia"></span><span style="background-color: maroon"></span><br>
-        </div>
-        <!--<div class="tool_group" id="size-choose" style="display:none;">
-            <span style=
-        </div>-->
-        <script src="static/js/paint.js"></script>
-    </body>
+
+    <div class="tool_group" id="color-choose" style="display:none; ">
+        <span style="background-color: aqua"></span><span style="background-color: gray"></span>
+        <br>
+        <span style="background-color: navy"></span><span style="background-color: silver"></span>
+        <br>
+        <span style="background-color: black"></span><span style="background-color: green"></span>
+        <br>
+        <span style="background-color: olive"></span><span style="background-color: teal"></span>
+        <br>
+        <span style="background-color: blue"></span><span style="background-color: lime"></span>
+        <br>
+        <span style="background-color: purple"></span><span style="background-color: yellow"></span>
+        <br>
+        <span style="background-color: red"></span><span style="background-color: white"></span>
+        <br>
+        <span style="background-color: fuchsia"></span><span style="background-color: maroon"></span>
+        <br>
+    </div>
+    <div class="tool_group" id="size-choose" style="display:none;"></div>
+    <script src="static/js/paint.js"></script>
+    <script src="static/js/fb.js"></script>
+    <script src="static/js/chat.js"></script>
+</body>
+
 </html>

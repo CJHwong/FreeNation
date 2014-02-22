@@ -19,6 +19,8 @@ io.of('/draw')
     socket.emit('start', { sid: socket.id });
     socket.on('addClick', function(data) {
         data.sid = socket.id;
+        data.stamp = (new Date).valueOf();
+        socket.emit('toDraw', data);
         socket.broadcast.emit('toDraw', data);
     });
     socket.on('disconnect', function(data) {
