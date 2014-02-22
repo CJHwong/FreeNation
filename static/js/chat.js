@@ -1,6 +1,15 @@
+function randomColor() {
+    var e = "1234567890ABCDE",
+        s = "";
+    for (var i = 0; i < 6; i += 1) {
+        s += e[parseInt(Math.random()*100, 10) % e.length];
+    }
+    return "#" + s;
+}
+
 var chats = io.connect('/chat');
 chats.on('news', function (data) {
-    $("#chat-room").append("<span>" + data.name + ": " + data.msg + "<br></span>");
+    $("#chat-room").append("<p><span class='messages' style='color:" + randomColor() + ";'>" + data.name + "</span>: " + data.msg + "</p>");
 });
 
 $("#msg").keydown(function (e) {
@@ -11,7 +20,7 @@ $("#msg").keydown(function (e) {
             name: userData.name,
             msg: $("#msg").val()
         });
-        $("#chat-room").append("<span>" + userData.name + ": " + $("#msg").val() + "</span><br>");
+        $("#chat-room").append("<p><span class='messages' style='color:" + paintColor + ";'>" + userData.name + "</span>: " + $("#msg").val() + "</p>");
         $("#msg").val("");
     }
 });
