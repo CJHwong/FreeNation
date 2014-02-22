@@ -17,21 +17,21 @@
                 mysid = data.sid;
             });
             draws.on('toDraw', function(data){
-                addClick(data.sid, data.x, data.y, data.drag, data.pcolor);
+                addClick(data.sid, data.x, data.y, data.drag, data.pcolor, data.stamp);
                 redraw();
             });
             var context = document.getElementById('canvas').getContext("2d");
             $('#window').mousedown(function(e){
               paint = true;
               draws.emit('addClick', {x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop, drag: false, pcolor: paintColor});
-              addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, paintColor);
-              redraw();
+              //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, paintColor);
+              //redraw();
             });
             $('#window').mousemove(function(e){
               if(paint){
                 draws.emit('addClick', {x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop, drag: true, pcolor: paintColor});
-                addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, paintColor);
-                redraw();
+                //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, paintColor);
+                //redraw();
               }
             });
             $('#window').mouseup(function(e){
@@ -39,15 +39,16 @@
             });
             $('#window').mouseleave(function(e){
               paint = false;
+                
             });
                 
             chats.on('news', function (data) {
                 $("#chat-room").append("<span>" + data.name + ": " + data.msg + "<br></span>");
             });
             $("#msg").keydown(function(e) {
-                console.log(e);
+                //console.log(e);
                 if (e.keyCode == 13) {
-                    console.log("qq");
+                    //console.log("qq");
                     chats.emit('newmsg', { name: "st900278", msg: $("#msg").val() });
                     $("#chat-room").append("<span>st900278: " + $("#msg").val() + "</span><br>");
                     $("#msg").val("");
@@ -59,7 +60,7 @@
 
             var paint;
 
-            var addClick = function(sid, x, y, dragging, pcolor)
+            var addClick = function(sid, x, y, dragging, pcolor, stamp)
             {
               if (!drawings[sid])
               {
@@ -68,15 +69,18 @@
                   drawings[sid]["clickY"]= new Array();
                   drawings[sid]["clickDrag"] = new Array();
                   drawings[sid]["colors"] = new Array();
+                  drawings[sid]["stamps"] = new Array();
               }
               var clickX = drawings[sid].clickX;
               var clickY = drawings[sid].clickY;
               var clickDrag = drawings[sid].clickDrag;
               var colors = drawings[sid].colors;
+              var stamps = drawings[sid].stamps;
               clickX.push(x);
               clickY.push(y);
               clickDrag.push(dragging);
               colors.push(pcolor);
+              stamps.push(stamp);
             }
             var redraw = function(){
               context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
@@ -84,28 +88,37 @@
               
               context.lineJoin = "round";
               context.lineWidth = 5;
+                
+              var objs = new Array();
               for (var sid in drawings)
               {
-                  var clickX = drawings[sid].clickX;
-                  var clickY = drawings[sid].clickY;
-                  var clickDrag = drawings[sid].clickDrag;
-                  var colors = drawings[sid].colors;
-                  for(var i=0; i < clickX.length; i++) {
-                    context.strokeStyle = colors[i];
-                    context.beginPath();
-                    if(clickDrag[i] && i){
-                      context.moveTo(clickX[i-1], clickY[i-1]);
-                     }else{
-                       context.moveTo(clickX[i]-1, clickY[i]);
-                     }
-                     context.lineTo(clickX[i], clickY[i]);
-                     context.closePath();
-                     context.stroke();
+                 var stamps = drawings[sid].stamps;
+                 for (var i = 0; i < stamps.length; i++)
+                     objs.push({'sid': sid, 'i': i, 'stamp': stamps[i]});
+              }
+              objs = objs.sort(function(x, y) { return x.stamp - y.stamp; });
+              //console.log(objs);
+              for (var idx in objs)
+              {
+                  var sid = objs[idx].sid;
+                  var i = objs[idx].i;
+                  context.strokeStyle = drawings[sid].colors[i];
+                  context.beginPath();
+                  if(drawings[sid].clickDrag[i] && i){
+                      context.moveTo(drawings[sid].clickX[i-1], drawings[sid].clickY[i-1]);
+                  }else{
+                      context.moveTo(drawings[sid].clickX[i]-1, drawings[sid].clickY[i]);
                   }
+                  context.lineTo(drawings[sid].clickX[i], drawings[sid].clickY[i]);
+                  context.closePath();
+                  context.stroke();
               }
             }
             $("#color-choose span").click(function() {
                 paintColor = $(this).css("background-color");
+            });
+            $("#download-btn").click(function() {
+                window.open($("#canvas")[0].toDataURL("image/png"));
             });
         });
         </script>
@@ -115,7 +128,9 @@
         
         <div id="tools">
             <a class="tools-cat" id="color-choose-btn">色</a>
-            <a class="tools-cat" id="size-choose-btn">大</a>
+            <a class="tools-cat" id="size-choose-btn">大</a><br>
+            <a class="tools-cat" id="eraser-btn">E</a>
+            <a class="tools-cat" id="download-btn">D</a>
         </div>
         
         <div id="container">
@@ -148,9 +163,9 @@
             <span style="background-color: red"></span><span style="background-color: white"></span><br>
             <span style="background-color: fuchsia"></span><span style="background-color: maroon"></span><br>
         </div>
-        <div class="tool_group" id="size-choose" style="display:none;">
+        <!--<div class="tool_group" id="size-choose" style="display:none;">
             <span style=
-        </div>
+        </div>-->
         <script src="static/js/paint.js"></script>
     </body>
 </html>
