@@ -1,16 +1,97 @@
 <html>
     <head>
         <link type="text/css" rel="stylesheet" href="static/css/styles.css">
+        <meta charset="utf-8">
+        <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript">
+            var drawings = Object();
+            var draws = io.connect('/draw');
+            var mysid;
+            $(function() {
+
+            draws.on('start', function(data) {
+                mysid = data.sid;
+            });
+            draws.on('toDraw', function(data){
+                addClick(data.sid, data.x, data.y, data.drag);
+                redraw();
+            });
+            var context = document.getElementById('canvas').getContext("2d");
+            $('#window').mousedown(function(e){
+              paint = true;
+              draws.emit('addClick', {x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop, drag: false});
+              addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+              redraw();
+            });
+            $('#window').mousemove(function(e){
+              if(paint){
+                draws.emit('addClick', {x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop, drag: true});
+                addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+                redraw();
+              }
+            });
+            $('#window').mouseup(function(e){
+              paint = false;
+            });
+            $('#window').mouseleave(function(e){
+              paint = false;
+            });
+
+            var paint;
+
+            var addClick = function(sid, x, y, dragging)
+            {
+              if (!drawings[sid])
+              {
+                  drawings[sid] = Object();
+                  drawings[sid]["clickX"] = new Array();
+                  drawings[sid]["clickY"]= new Array();
+                  drawings[sid]["clickDrag"] = new Array();
+              }
+              var clickX = drawings[sid].clickX;
+              var clickY = drawings[sid].clickY;
+              var clickDrag = drawings[sid].clickDrag;
+              clickX.push(x);
+              clickY.push(y);
+              clickDrag.push(dragging);
+            }
+            var redraw = function(){
+              context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+
+              context.strokeStyle = "#df4b26";
+              context.lineJoin = "round";
+              context.lineWidth = 5;
+              for (var sid in drawings)
+              {
+                  var clickX = drawings[sid].clickX;
+                  var clickY = drawings[sid].clickY;
+                  var clickDrag = drawings[sid].clickDrag;
+                  for(var i=0; i < clickX.length; i++) {		
+                    context.beginPath();
+                    if(clickDrag[i] && i){
+                      context.moveTo(clickX[i-1], clickY[i-1]);
+                     }else{
+                       context.moveTo(clickX[i]-1, clickY[i]);
+                     }
+                     context.lineTo(clickX[i], clickY[i]);
+                     context.closePath();
+                     context.stroke();
+                  }
+              }
+            }
+            });
+        </script>
     </head>
     <body>
-        <nav id="navbar"><h1>Paint</h1></nav>
+        <nav id="navbar"><h1>你想畫你就畫</h1></nav>
         
         <div id="tools"></div>
         
         <div id="container">
             <div id="window">
                 <div id="title"></div>
-                <canvas id="canvas"></canvas>
+                <canvas id="canvas" width="350" height="350"></canvas>
             </div>
         </div>
         

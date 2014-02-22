@@ -20,7 +20,7 @@ members.addEventListener("click", function () {
     toggleSidebar();
 }, false);
 
-
+/*
 function draw() {
     "use strict";
     var canvas = document.querySelector("#canvas"),
@@ -46,7 +46,7 @@ function draw() {
 }
 
 document.addEventListener("DOMContentLoaded", draw, false);
-
+*/
 var container = document.querySelector("#container");
 var win = document.querySelector("#window");
 var title = document.querySelector("#title");
