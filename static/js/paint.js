@@ -68,7 +68,7 @@ $(function () {
         mysid = data.sid;
     });
     draws.on('toDraw', function (data) {
-        addClick(data.sid, data.x, data.y, data.drag, data.pcolor);
+        addClick(data.sid, data.x, data.y, data.drag, data.pcolor, data.stamp);
         redraw();
     });
     var context = document.getElementById('canvas').getContext("2d");
@@ -80,8 +80,8 @@ $(function () {
             drag: false,
             pcolor: paintColor
         });
-        addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, paintColor);
-        redraw();
+        //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, paintColor);
+        //redraw();
     });
     $('#window').mousemove(function (e) {
         if (paint) {
@@ -91,8 +91,8 @@ $(function () {
                 drag: true,
                 pcolor: paintColor
             });
-            addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, paintColor);
-            redraw();
+            //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, paintColor);
+            //redraw();
         }
     });
     $('#window').mouseup(function (e) {
@@ -108,49 +108,60 @@ $(function () {
     });
 
     var paint;
-
-    var addClick = function (sid, x, y, dragging, pcolor) {
-        if (!drawings[sid]) {
-            drawings[sid] = Object();
-            drawings[sid]["clickX"] = new Array();
-            drawings[sid]["clickY"] = new Array();
-            drawings[sid]["clickDrag"] = new Array();
-            drawings[sid]["colors"] = new Array();
-        }
-        var clickX = drawings[sid].clickX;
-        var clickY = drawings[sid].clickY;
-        var clickDrag = drawings[sid].clickDrag;
-        var colors = drawings[sid].colors;
-        clickX.push(x);
-        clickY.push(y);
-        clickDrag.push(dragging);
-        colors.push(pcolor);
-    }
-    var redraw = function () {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
-
-
-        context.lineJoin = "round";
-        context.lineWidth = 5;
-        for (var sid in drawings) {
-            var clickX = drawings[sid].clickX;
-            var clickY = drawings[sid].clickY;
-            var clickDrag = drawings[sid].clickDrag;
-            var colors = drawings[sid].colors;
-            for (var i = 0; i < clickX.length; i++) {
-                context.strokeStyle = colors[i];
-                context.beginPath();
-                if (clickDrag[i] && i) {
-                    context.moveTo(clickX[i - 1], clickY[i - 1]);
-                } else {
-                    context.moveTo(clickX[i] - 1, clickY[i]);
-                }
-                context.lineTo(clickX[i], clickY[i]);
-                context.closePath();
-                context.stroke();
+            var addClick = function(sid, x, y, dragging, pcolor, stamp)
+            {
+              if (!drawings[sid])
+              {
+                  drawings[sid] = Object();
+                  drawings[sid]["clickX"] = new Array();
+                  drawings[sid]["clickY"]= new Array();
+                  drawings[sid]["clickDrag"] = new Array();
+                  drawings[sid]["colors"] = new Array();
+                  drawings[sid]["stamps"] = new Array();
+              }
+              var clickX = drawings[sid].clickX;
+              var clickY = drawings[sid].clickY;
+              var clickDrag = drawings[sid].clickDrag;
+              var colors = drawings[sid].colors;
+              var stamps = drawings[sid].stamps;
+              clickX.push(x);
+              clickY.push(y);
+              clickDrag.push(dragging);
+              colors.push(pcolor);
+              stamps.push(stamp);
             }
-        }
-    }
+            var redraw = function(){
+              context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+
+              
+              context.lineJoin = "round";
+              context.lineWidth = 5;
+                
+              var objs = new Array();
+              for (var sid in drawings)
+              {
+                 var stamps = drawings[sid].stamps;
+                 for (var i = 0; i < stamps.length; i++)
+                     objs.push({'sid': sid, 'i': i, 'stamp': stamps[i]});
+              }
+              objs = objs.sort(function(x, y) { return x.stamp - y.stamp; });
+              //console.log(objs);
+              for (var idx in objs)
+              {
+                  var sid = objs[idx].sid;
+                  var i = objs[idx].i;
+                  context.strokeStyle = drawings[sid].colors[i];
+                  context.beginPath();
+                  if(drawings[sid].clickDrag[i] && i){
+                      context.moveTo(drawings[sid].clickX[i-1], drawings[sid].clickY[i-1]);
+                  }else{
+                      context.moveTo(drawings[sid].clickX[i]-1, drawings[sid].clickY[i]);
+                  }
+                  context.lineTo(drawings[sid].clickX[i], drawings[sid].clickY[i]);
+                  context.closePath();
+                  context.stroke();
+              }
+            }
     $("#color-choose span").click(function () {
         paintColor = $(this).css("background-color");
     });
