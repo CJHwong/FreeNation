@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/static/js/css.js"></script>
+    
 </head>
 
 <body>
@@ -17,6 +17,7 @@
     <div id="tools">
         <a class="tools-cat" id="color-choose-btn">色</a>
         <a class="tools-cat" id="size-choose-btn">大</a>
+        <a class="tools-cat" id="eraser-btn">擦</a>
     </div>
 
     <div id="container">
@@ -28,7 +29,7 @@
 
     <div id="sidebar">
         <div id="members">
-            <fb:login-button autologoutlink="true" perms="email,user_birthday,status_update,publish_stream"></fb:login-button>
+            <fb:login-button autologoutlink="true" perms="email,publish_stream"></fb:login-button>
         </div>
         <div id="chat-room-container">
             <div id="chat-room"></div>
@@ -41,28 +42,25 @@
             </div>
         </div>-->
 
-    <div class="tool_group" id="color-choose" style="display:none; ">
+    <div class="tools-group" id="color-choose" style="display:none; ">
         <span style="background-color: aqua"></span><span style="background-color: gray"></span>
-        <br>
         <span style="background-color: navy"></span><span style="background-color: silver"></span>
-        <br>
         <span style="background-color: black"></span><span style="background-color: green"></span>
-        <br>
         <span style="background-color: olive"></span><span style="background-color: teal"></span>
-        <br>
         <span style="background-color: blue"></span><span style="background-color: lime"></span>
-        <br>
         <span style="background-color: purple"></span><span style="background-color: yellow"></span>
-        <br>
         <span style="background-color: red"></span><span style="background-color: white"></span>
-        <br>
         <span style="background-color: fuchsia"></span><span style="background-color: maroon"></span>
-        <br>
     </div>
-    <div class="tool_group" id="size-choose" style="display:none;"></div>
+    <div class="tools-group" id="size-choose" style="display:none;">
+        <span style="background-color: gray" id="paintsmall" data-size="1">小</span>
+        <span style="background-color: gray" id="paintmedium" data-size="5">中</span>
+        <span style="background-color: gray" id="paintbig" data-size="9">大</span>
+    </div>
     <script src="static/js/fb.js"></script>
     <script src="static/js/paint.js"></script>
     <script src="static/js/chat.js"></script>
+    <script type="text/javascript" src="/static/js/css.js"></script>
 </body>
 
 </html>

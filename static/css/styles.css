@@ -118,17 +118,28 @@ body {
     height: 19px;
     margin: 3px;
 }
-.tool-cat{
+.tools-cat{
+    font-size:16px;
+}
+
+#size-choose {
+    position: absolute;
+    width:29px;
+    left:55px;
+}
+#size-choose span{
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+    border:1.5px solid;
+    cursor:pointer;
+    
 }
 
 #color-choose {
     left: 55px;
     position: absolute;
     width: 58px;
-}
-#color-choose-btn:active {
-    font-size: 10px;
-    margin-left: 9px;
 }
     
 #color-choose span {

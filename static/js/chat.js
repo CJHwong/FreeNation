@@ -13,14 +13,14 @@ chats.on('news', function (data) {
 });
 
 $("#msg").keydown(function (e) {
-    //console.log(e);
+    var usname = userData ? userData.name : "guest";
     if (e.keyCode === 13) {
         chats.emit('newmsg', {
             color: paintColor,
-            name: userData.name,
+            name: usname,
             msg: $("#msg").val()
         });
-        $("#chat-room").append("<p><span class='messages' style='color:" + paintColor + ";'>" + userData.name + "</span>: " + $("#msg").val() + "</p>");
+        $("#chat-room").append("<p><span class='messages' style='color:" + paintColor + ";'>" + usname + "</span>: " + $("#msg").val() + "</p>");
         $("#msg").val("");
     }
 });

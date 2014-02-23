@@ -1,5 +1,6 @@
 var http = require('http'),
-    express = require('express');
+    express = require('express'),
+    rcolor = require('./random-color');
 var app = express();
 
 var server = app.listen(7122);
@@ -11,7 +12,6 @@ app.use('/static', express.static(__dirname + '/static'));
 app.get('/', function(req, res) {
     res.sendfile(__dirname + '/index.html');
 });
-
 
 
 io.of('/draw')
@@ -30,7 +30,7 @@ io.of('/draw')
 
 io.of('/chat')
 .on('connection', function(socket) {
-    socket.emit('news', { color: 'red', name: 'Server', msg: 'Welcome!' });
+    socket.emit('news', { color: rcolor.randomColor(), name: 'Server', msg: 'Welcome!' });
     socket.join('lobby');
     
     socket.on('newmsg', function(data) {

@@ -62,59 +62,56 @@ var drawings = Object();
 var draws = io.connect('/draw');
 var mysid;
 var paintColor = "red";
+var nowSize = 5;
 $(function () {
 
     draws.on('start', function (data) {
         mysid = data.sid;
     });
     draws.on('toDraw', function (data) {
-        addClick(data.sid, data.x, data.y, data.drag, data.pcolor, data.stamp);
+        addClick(data.sid, data.x, data.y, data.drag, data.pcolor, data.psize, data.stamp);
         redraw();
     });
     var context = document.getElementById('canvas').getContext("2d");
-    $('#window').mousedown(function (e) {
+    $('#canvas').mousedown(function (e) {
         paint = true;
         draws.emit('addClick', {
-            x: e.pageX - this.offsetLeft,
-            y: e.pageY - this.offsetTop,
+            x: e.pageX - $(this).offset().left,
+            y: e.pageY - $(this).offset().top,
             drag: false,
+            psize: nowSize,
             pcolor: paintColor
         });
         //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, paintColor);
         //redraw();
     });
-    $('#window').mousemove(function (e) {
+    $('#canvas').mousemove(function (e) {
         if (paint) {
             draws.emit('addClick', {
-                x: e.pageX - this.offsetLeft,
-                y: e.pageY - this.offsetTop,
+                x: e.pageX - $(this).offset().left,
+                y: e.pageY - $(this).offset().top,
                 drag: true,
+                psize: nowSize,
                 pcolor: paintColor
             });
             //addClick(mysid, e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, paintColor);
             //redraw();
         }
     });
-    $('#window').mouseup(function (e) {
+    $('#canvas').mouseup(function (e) {
         paint = false;
     });
-    $('#window').mouseleave(function (e) {
+    $('#canvas').mouseleave(function (e) {
         paint = false;
     });
 
-
-    var colorChooseFlag = false;
     $("#color-choose-btn").click(function () {
-        if (colorChooseFlag) {
-            $("#color-choose").hide();
-        } else {
-            $("#color-choose").show();
-        }
-        colorChooseFlag = !colorChooseFlag;
+        $(".tools-group").not("#color-choose").hide();
+        $("#color-choose").toggle();
     });
 
     var paint;
-            var addClick = function(sid, x, y, dragging, pcolor, stamp)
+            var addClick = function(sid, x, y, dragging, pcolor, psize, stamp)
             {
               if (!drawings[sid])
               {
@@ -123,17 +120,20 @@ $(function () {
                   drawings[sid]["clickY"]= new Array();
                   drawings[sid]["clickDrag"] = new Array();
                   drawings[sid]["colors"] = new Array();
+                  drawings[sid]["sizes"] = new Array();
                   drawings[sid]["stamps"] = new Array();
               }
               var clickX = drawings[sid].clickX;
               var clickY = drawings[sid].clickY;
               var clickDrag = drawings[sid].clickDrag;
               var colors = drawings[sid].colors;
+              var sizes = drawings[sid].sizes;
               var stamps = drawings[sid].stamps;
               clickX.push(x);
               clickY.push(y);
               clickDrag.push(dragging);
               colors.push(pcolor);
+              sizes.push(psize);
               stamps.push(stamp);
             }
             var redraw = function(){
@@ -141,7 +141,7 @@ $(function () {
 
               
               context.lineJoin = "round";
-              context.lineWidth = 5;
+              
                 
               var objs = new Array();
               for (var sid in drawings)
@@ -157,6 +157,11 @@ $(function () {
                   var sid = objs[idx].sid;
                   var i = objs[idx].i;
                   context.strokeStyle = drawings[sid].colors[i];
+                  context.lineWidth = drawings[sid].sizes[i];
+                  if (drawings[sid].colors[i] == 'eraser')
+                      context.globalCompositeOperation = "destination-out";
+                  else
+                      context.globalCompositeOperation = "source-over";
                   context.beginPath();
                   if(drawings[sid].clickDrag[i] && i){
                       context.moveTo(drawings[sid].clickX[i-1], drawings[sid].clickY[i-1]);
@@ -171,4 +176,32 @@ $(function () {
     $("#color-choose span").click(function () {
         paintColor = $(this).css("background-color");
     });
+    $("#eraser-btn").click(function() {
+        paintColor = "eraser";
+    });
+    $("#size-choose-btn").click(function(){
+        $(".tools-group").not("#size-choose").hide();
+        $("#size-choose").toggle();
+    });
+    //tools
+    $(".tools-cat").each(function(){
+        var thisID = $(this).attr("id");
+        $("#"+thisID)
+        .mousedown(function(){
+            $(this).css("font-size","10px");    
+        })
+        .mouseout(function(){
+            $(this).css("font-size","16px");
+        })
+        .mouseup(function(){
+            $(this).css("font-size","16px");
+        });
+    });
+    
+    $("#size-choose span").click(function() {
+        nowSize = $(this).attr("data-size");
+        $("#size-choose").hide();
+    });
+
+    
 });
