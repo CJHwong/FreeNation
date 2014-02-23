@@ -103,8 +103,14 @@ $(function () {
     });
 
 
+    var colorChooseFlag = false;
     $("#color-choose-btn").click(function () {
-        $("#color-choose").show();
+        if (colorChooseFlag) {
+            $("#color-choose").hide();
+        } else {
+            $("#color-choose").show();
+        }
+        colorChooseFlag = !colorChooseFlag;
     });
 
     var paint;
