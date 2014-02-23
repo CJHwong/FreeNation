@@ -30,10 +30,10 @@ io.of('/draw')
 
 io.of('/chat')
 .on('connection', function(socket) {
-    socket.emit('news', { name: 'Server', msg: 'Welcome!' });
+    socket.emit('news', { color: 'red', name: 'Server', msg: 'Welcome!' });
     socket.join('lobby');
     
     socket.on('newmsg', function(data) {
-        socket.broadcast.to('lobby').emit('news', { name: data.name, msg: data.msg });
+        socket.broadcast.to('lobby').emit('news', {color: data.color, name: data.name, msg: data.msg });
     });
 });

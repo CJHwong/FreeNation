@@ -9,14 +9,14 @@ function randomColor() {
 
 var chats = io.connect('/chat');
 chats.on('news', function (data) {
-    $("#chat-room").append("<p><span class='messages' style='color:" + randomColor() + ";'>" + data.name + "</span>: " + data.msg + "</p>");
+    $("#chat-room").append("<p><span class='messages' style='color:" + data.color + ";'>" + data.name + "</span>: " + data.msg + "</p>");
 });
 
 $("#msg").keydown(function (e) {
     //console.log(e);
     if (e.keyCode === 13) {
-        console.log(typeof userData);
         chats.emit('newmsg', {
+            color: paintColor,
             name: userData.name,
             msg: $("#msg").val()
         });
