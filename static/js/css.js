@@ -3,7 +3,7 @@ $(document).ready(function(){
         var thisID = $(this).attr("id");
         $("#"+thisID)
         .mousedown(function(){
-            $(this).css("font-size","10px");    
+            $(this).css("font-size","16px");    
         })
         .mouseout(function(){
             $(this).css("font-size","16px");

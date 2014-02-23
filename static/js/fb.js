@@ -20,6 +20,11 @@ window.fbAsyncInit = function () {
     FB.getLoginStatus(function () {
         FB.api('/me', function (response) {
             userData = response;
+            var toFB = document.querySelector("#post-to-fb");
+            toFB.addEventListener("click", function (res) {
+                console.log('clicked');
+                login(res);
+            }(response), false);
         });
     });
 };
@@ -33,9 +38,19 @@ window.fbAsyncInit = function () {
     document.getElementById('fb-root').appendChild(e);
 }());
 
-function login() {
-    FB.api('/me', function (response) {
-        userData = response;
-        console.log(userData);
+function login(response) {
+    /*
+    FB.api('/me/feed', 'post', { message: "HELLO" }, function(response) {
+        if (!response || response.error) {
+            alert('Error occured');
+        } else {
+            alert('Post ID: ' + response.id);
+        }
     });
+    */
 }
+
+/*
+var canvas = document.querySelector("#canvas");
+canvas.toDataURL("image/png");
+*/

@@ -50,8 +50,8 @@ body {
     position: fixed;
     left: 70px;
     top: 70px;
-    width: 350px;
-    height: 350px;
+    width: 410px;
+    height: 410px;
     box-shadow: 1px 1px 3px black;
 }
 
@@ -65,10 +65,6 @@ body {
 
 #canvas {
     background-color: white;
-    /*width: 100%;*/
-    width: 350px;
-    height: 350px;
-    /*height: calc(100% - 18px);*/
     transition: 1s;
 }
 
@@ -111,15 +107,40 @@ body {
     margin: 0;
 }
 
-#tools a{
+#tools span{
     display: inline-block;
     cursor: pointer;
     color: white;
-    height: 19px;
-    margin: 3px;
+    height: 32px;
+    width: 32px;
+    position: fixed;
+}
+#tools span:nth-child(1) {
+    left: 6px;
+    top: calc(37px + 5px);
+}
+#tools span:nth-child(2) {
+    left: 6px;
+    top: calc(37px + 40px);
+}
+#tools span:nth-child(3) {
+    left: 6px;
+    top: calc(37px + 75px);
+}
+#tools span:nth-child(4) {
+    left: 6px;
+    top: calc(37px + 110px);
+}
+#tools span:nth-child(5) {
+    left: 6px;
+    top: calc(37px + 145px);
+}
+#tools span:nth-child(6) {
+    left: 6px;
+    top: calc(37px + 180px);
 }
 .tools-cat{
-    font-size:16px;
+    font-size:32px;
 }
 
 #size-choose {
@@ -148,4 +169,11 @@ body {
     width: 25px;
     border:1.5px solid;
     cursor:pointer;
+}
+
+#textbox {
+    background-color: rgba(0, 0, 0, 0);
+    position: absolute;
+    left: -100%;
+    top: -100%;
 }

@@ -15,32 +15,32 @@
     </nav>
 
     <div id="tools">
-        <a class="tools-cat" id="color-choose-btn">色</a>
-        <a class="tools-cat" id="size-choose-btn">大</a>
-        <a class="tools-cat" id="eraser-btn">擦</a>
+        <span class="tools-cat" id="color-choose-btn">色</span>
+        <span class="tools-cat" id="size-choose-btn">大</span>
+        <span class="tools-cat" id="eraser-btn">擦</span>
+        <span class="tools-cat" id="text-btn">字</span>
+        <span class="tools-cat" id="pencil-btn">筆</span>
+        <span class="tools-cat" id="spray-btn">噴</span>
+        
     </div>
 
     <div id="container">
         <div id="window">
             <div id="title"></div>
-            <canvas id="canvas" width="350" height="350"></canvas>
+            <canvas id="canvas" width="410" height="410"></canvas>
         </div>
     </div>
 
     <div id="sidebar">
         <div id="members">
             <fb:login-button autologoutlink="true" perms="email,publish_stream"></fb:login-button>
+            <button id="post-to-fb">POST</button>
         </div>
         <div id="chat-room-container">
             <div id="chat-room"></div>
             <input id="msg" type="text" placeholder="Type here">
         </div>
     </div>
-    <!--<div style="background-color: black; width:100%; height: 100%; position:fixed; z-index:100; top:0; opacity:0.4">
-            <div>
-                <input type="text" placeholder="XD" />
-            </div>
-        </div>-->
 
     <div class="tools-group" id="color-choose" style="display:none; ">
         <span style="background-color: aqua"></span><span style="background-color: gray"></span>
@@ -57,10 +57,10 @@
         <span style="background-color: gray" id="paintmedium" data-size="5">中</span>
         <span style="background-color: gray" id="paintbig" data-size="9">大</span>
     </div>
+    <textarea id="textbox"></textarea> 
     <script src="static/js/fb.js"></script>
     <script src="static/js/paint.js"></script>
     <script src="static/js/chat.js"></script>
-    <script type="text/javascript" src="/static/js/css.js"></script>
 </body>
 
 </html>
